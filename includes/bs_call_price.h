@@ -10,6 +10,8 @@
  * Intended as the minimal building block for Greeks.
  */
 
+#include "Common.hpp"
+
 // Φ(z): standard normal CDF
 inline double Phi_real(double z) {                
     static constexpr double INV_SQRT_2 = 0.70710678118654752440;
