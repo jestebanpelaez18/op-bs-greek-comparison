@@ -1,7 +1,6 @@
 #ifndef ANALYTIC_GREEK_HPP
 # define ANALYTIC_GREEK_HPP
 
-#include "bs_call_price.h"
 #include "Common.hpp"
 
 inline double analytic_delta(double S, double K, double r, double q, double sigma, double T)
