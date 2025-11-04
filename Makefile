@@ -2,7 +2,7 @@ CXX := g++
 CXXFLAGS := -std=c++20 -O3 -Wall -Wextra -Wpedantic -Iinclude
 LDFLAGS := 
 
-SRC_DIR := src
+SRC_DIR := srcs
 BIN_DIR := bin
 BUILD_DIR := build
 
