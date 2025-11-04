@@ -1,12 +1,11 @@
 #ifndef FINITE_DIFFERENCES_HPP
 # define FINITE_DIFFERENCES_HPP
 
-#include "bs_call_price.h"
 #include "Common.hpp"
 
 inline double finite_difference_delta(double S, double K, double r, double q, double sigma, double T)
 {
-    double eps = std::numeric_limits<double>::epsilon(); // Machine epsilon (precision limit)
+    const double eps = std::numeric_limits<double>::epsilon(); // Machine epsilon (precision limit)
     double h = std::sqrt(eps) * S; 
 
     const double C_0 = bs_price_call(S, K, r, q, sigma, T); // C(S)
