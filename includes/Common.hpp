@@ -6,6 +6,7 @@
 #include <numeric>
 #include <cassert>  
 #include <iostream>
+#include <complex>
 #include "bs_call_price.h"
 
 #endif  // COMMON_HPP

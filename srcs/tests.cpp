@@ -1,6 +1,6 @@
 #include "../includes/Common.hpp"
-#include "../includes/Analytic_Greek.hpp"
-#include "../includes/Finite_Differences.hpp"  
+#include "../includes/AnalyticGreek.hpp"
+#include "../includes/FiniteDifferences.hpp"  
 
 static void run_case(const char* title, double S, double K, double r, double q, double sigma, double T)
 {
