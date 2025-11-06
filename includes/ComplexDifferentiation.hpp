@@ -7,24 +7,36 @@ inline double complex_step_delta(double S, double K, double r, double q, double 
 {
     const double eps = std::numeric_limits<double>::epsilon(); // Machine epsilon (precision limit)
     double h = std::sqrt(eps) * S; 
+    const std::complex<double> S_c(S, h);
 
-    const double C_0 = bs_price_call(S, K, r, q, sigma, T); // C(S)
-    const double C_1 = bs_price_call(S + h, K, r, q, sigma, T); // C(S + h)
+    const std::complex<double> C_ri = bs_price_call_t<std::complex<double>>(S_c, K, r, q, sigma, T); // C(S + h)
 
+    return std::imag(C_ri) / (h);
 
-    return (C_1 - C_0) / (h);
 }
-inline double finite_difference_gamma(double S, double K, double r, double q, double sigma, double T)
+inline double complex_step_gamma_real(double S, double K, double r, double q, double sigma, double T)
 {  
-    double eps = std::numeric_limits<double>::epsilon(); // Machine epsilon (precision limit)
-    double h = std::sqrt(eps) * S; 
+    const double eps = std::numeric_limits<double>::epsilon(); // Machine epsilon (precision limit)
+    const double h = std::sqrt(eps) * S; 
+    const std::complex<double> S_c(S, h);
+    
+    const std::complex<double> C_ri = bs_price_call_t<std::complex<double>>(S_c, K, r, q, sigma, T); // C(S + h)
+    const double C_S = bs_price_call(S, K, r, q, sigma, T); // C(S)
 
-    const double C_0 = bs_price_call(S, K, r, q, sigma, T); // C(S)
-    const double C_1 = bs_price_call(S + h, K, r, q, sigma, T); // C(S + h)
-    const double C_2 = bs_price_call(S + 2 * h, K, r, q, sigma, T); // C(S + 2h)
-
-
-    return (C_2 - 2 * C_1 + C_0) / (h * h);
+    return -2.0 * (std::real(C_ri) - C_S) / (h * h);
 }
 
+inline double complex_step_gamma_45(double S, double K, double r, double q, double sigma, double T)
+{  
+    const double eps = std::numeric_limits<double>::epsilon(); // Machine epsilon (precision limit)
+    const double h = std::sqrt(eps) * S; 
+    
+    const std::complex<double> S_1(S + (h / std::sqrt(2)), (h / std::sqrt(2))); // S + hw
+    const std::complex<double> S_2(S - (h / std::sqrt(2)), (-h / std::sqrt(2))); // S - hw
+
+    const std::complex<double> C_1 = bs_price_call_t<std::complex<double>>(S_1, K, r, q, sigma, T); // C(S + hw)
+    const std::complex<double> C_2 = bs_price_call_t<std::complex<double>>(S_2, K, r, q, sigma, T); // C(S - hw)
+
+    return std::imag(C_1 + C_2) / (h * h);
+}
 #endif 
