@@ -24,8 +24,9 @@ inline double complex_step_gamma_real(double S, double K, double r, double q, do
 
 inline double complex_step_gamma_45(double S, double K, double r, double q, double sigma, double T, double h)
 {  
-    const std::complex<double> S_1(S + (h / std::sqrt(2)), (h / std::sqrt(2))); // S + hw
-    const std::complex<double> S_2(S - (h / std::sqrt(2)), (-h / std::sqrt(2))); // S - hw
+    const double h_div_sqrt2 = h / std::sqrt(2.0);
+    const std::complex<double> S_1(S + h_div_sqrt2, h_div_sqrt2); // S + hw
+    const std::complex<double> S_2(S - h_div_sqrt2, -h_div_sqrt2); // S - hw
 
     const std::complex<double> C_1 = bs_price_call_t<std::complex<double>>(S_1, K, r, q, sigma, T); // C(S + hw)
     const std::complex<double> C_2 = bs_price_call_t<std::complex<double>>(S_2, K, r, q, sigma, T); // C(S - hw)
