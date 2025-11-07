@@ -21,15 +21,15 @@ static void write_csv(const char* title, double S, double K, double r, double q,
     const double log_end = -4.0; // To 10^-4
     const double log_step = (log_end - log_start) / (points - 1); // Uniform step in log10 space
 
+    // Analytic
+    const double d_an  = analytic_delta(S,K,r,q,sigma,T);
+    const double g_an  = analytic_gamma(S,K,r,q,sigma,T);
+    
     for (int i = 0; i < points; ++i) 
     {
         const double exponent = log_start + i * log_step; // Exponent for h_rel
         const double h_rel = std::pow(10.0, exponent); // Convert exponent to h_rel
         const double h = h_rel * S;
-
-        // Analytic
-        const double d_an  = analytic_delta(S,K,r,q,sigma,T);
-        const double g_an  = analytic_gamma(S,K,r,q,sigma,T);
 
         // Finite Differences   
         const double d_fd = finite_difference_delta(S,K,r,q,sigma,T,h);
