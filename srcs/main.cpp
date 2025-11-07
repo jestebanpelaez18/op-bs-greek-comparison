@@ -13,6 +13,7 @@ static void write_csv(const char* title, double S, double K, double r, double q,
         return;
     }
 
+    file << std::fixed << std::setprecision(16);
     file << "h_rel,h,Delta_analytic,Delta_fd,Delta_cs,err_D_fd,err_D_cs,Gamma_analytic,Gamma_fd,Gamma_cs_real,Gamma_cs_45,err_G_fd,err_G_cs_real,err_G_cs_45\n";
 
     const int points = 24;
