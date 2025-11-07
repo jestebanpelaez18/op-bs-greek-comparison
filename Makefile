@@ -1,48 +1,47 @@
-CXX := g++
-CXXFLAGS := -std=c++20 -O3 -Wall -Wextra -Wpedantic -Iinclude
-LDFLAGS := 
+CXX      := g++
+CXXFLAGS := -std=c++20 -O2 -Wall -Wextra -Wpedantic
+INCLUDES := -Iincludes
 
-SRC_DIR := srcs
-BIN_DIR := bin
-BUILD_DIR := build
+SRC_DIR  := srcs
+BIN_DIR  := bin
 
-DEMO := $(BIN_DIR)/demo
-TESTS := $(BIN_DIR)/tests
-BENCH := $(BIN_DIR)/bench
+MAIN_SRC := $(SRC_DIR)/main.cpp
+TEST_SRC := $(SRC_DIR)/tests.cpp
 
-DEMO_SRCS := $(SRC_DIR)/main.cpp
-TESTS_SRCS := $(SRC_DIR)/tests.cpp
-BENCH_SRCS := $(SRC_DIR)/bench.cpp
+MAIN_BIN := $(BIN_DIR)/main
+TEST_BIN := $(BIN_DIR)/tests
 
-DEMO_OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(DEMO_SRCS))
-TESTS_OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(TESTS_SRCS))
-BENCH_OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(BENCH_SRCS))
 
-.PHONY: all clean demo tests bench
+.PHONY: all main tests run clean fclean re
 
-all: demo tests bench
+all: main
 
-demo: $(DEMO)
+main: $(MAIN_BIN)
 
-tests: $(TESTS)
+tests: $(TEST_BIN)
 
-bench: $(BENCH)
-
-$(DEMO): $(DEMO_OBJS)
+$(BIN_DIR):
 	@mkdir -p $(BIN_DIR)
-	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
-$(TESTS): $(TESTS_OBJS)
-	@mkdir -p $(BIN_DIR)
-	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
+$(MAIN_BIN): $(MAIN_SRC) | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $< -o $@
 
-$(BENCH): $(BENCH_OBJS)
-	@mkdir -p $(BIN_DIR)
-	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
+ifneq ($(wildcard $(TEST_SRC)),)
+$(TEST_BIN): $(TEST_SRC) | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $< -o $@
+endif
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+run: main
+	./$(MAIN_BIN)
 
 clean:
-	rm -rf $(BUILD_DIR) $(BIN_DIR)
+	@echo "Cleaning generated CSV and binaries..."
+	rm -f *.csv
+	rm -f $(MAIN_BIN) $(TEST_BIN)
+
+fclean: clean
+	rm -rf $(BIN_DIR)
+
+re: fclean all
+
+
