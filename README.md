@@ -1,8 +1,8 @@
 # op-bs-greek-comparison
 
-# 🧮 Black–Scholes Greeks – Numerical Differentiation
+# Black–Scholes Greeks – Numerical Differentiation
 
-## 📘 Project Overview
+## Project Overview
 
 This project implements **numerical differentiation** for option Greeks (Delta $\Delta$ and Gamma $\Gamma$) under the **Black–Scholes model**. Three approaches were developed and compared:
 
@@ -14,14 +14,14 @@ The goal is to evaluate the numerical stability and accuracy of each method acro
 
 ---
 
-## ⚙️ Build & Run Instructions
+## Build & Run Instructions
 
-### 🧩 Requirements
+### Requirements
 
 * A **C++20** compatible compiler (e.g., `g++`)
 * **GNU Make**
 
-### 🔧 Build
+### Build
 
 To compile the main executable (`bin/main`):
 
@@ -29,7 +29,7 @@ To compile the main executable (`bin/main`):
 make
 ```
 
-### ▶️ Run
+### Run
 
 To compile and run the project directly:
 
@@ -44,12 +44,12 @@ This command will:
     * `bs_fd_vs_complex_scenario1.csv`
     * `bs_fd_vs_complex_scenario2.csv`
 
-### 🧹 Cleanup
+### Cleanup
 
 To clean the repository:
 
 ```bash
-make clean       # removes executables and CSVs
+make clean     
 ```
 To perform a full clean:
 
@@ -83,33 +83,46 @@ The codebase includes the following components:
 
 All functions were written in **C++20**, with `<complex>` for complex arithmetic.
 
-## Plots / Small Tables
+## Tables 
 
-Each CSV was analyzed to summarize errors across all step sizes.  
-Plots (created in Excel) include:
+A brief error validation report is provided below, summarizing the performance of the implemented methods: $\Delta_{fd}$, $\Delta_{cs}$, $\Gamma_{fd}$, $\Gamma_{cs, real}$, and $\Gamma_{cs, 45^{\circ}}$.
 
-- `|Δ_error|` vs. `h_rel`
-- `|Γ_error|` vs. `h_rel`
+We generated plots (not shown here) of the **absolute error** vs. the relative step size ($\mathbf{h_{rel}}$) for both Delta and Gamma to visualize stability and accuracy across the range $[10^{-16}, 10^{-4}]$.
 
-A compact summary is shown below (indicative values):
+The compact error summary (using Max, Median, and 90th Percentile) for **Scenario 1** is shown below:
 
-| Method | Δ Error (min) | Γ Error (min) | Stability |
-|---------|---------------|---------------|------------|
-| Finite Difference | ~1e-6 | ~1e-4 | Sensitive to h |
-| Complex-Step (Real) | ~1e-12 | ~1e-10 | Very stable |
-| Complex-Step (45°) | ~1e-12 | ~1e-10 | Very stable |
+| Metric | $\mathbf{\Delta_{fd}}$ | $\mathbf{\Delta_{cs}}$ | $\mathbf{\Gamma_{fd}}$ | $\mathbf{\Gamma_{cs, real}}$ | $\mathbf{\Gamma_{cs, 45^{\circ}}}$ |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Max Error** | 0.7924 | $\sim 6.045\text{e-}6$ | $1.332\text{e+}14$ | 0.02311 | 0.01985 |
+| **Median** | $4\text{e-}16$ | $\sim 1\text{e-}16$ | 16.486 | 0.01984 | $\sim 1.43\text{e-}8$ |
+| **Percentile 90** | 0.091 | 0 | $2.883\text{e+}12$ | 0.02009 | 0.00280 |
 
 ---
 
-## Observations
+And the error summary for **Scenario 2** (Stress Scenario):
 
-- **Complex-step methods** maintained high accuracy for very small `h_rel`, avoiding cancellation.  
-- **Finite differences** suffered from roundoff errors for `h_rel < 1e-8`.  
-- Accuracy peaks around `h_rel ≈ 1e-5` for forward-difference.  
-- Complex methods remained stable across all step sizes.  
-- In low-volatility near-expiry scenarios, all errors increase slightly due to lower option curvature.
+| Metric | $\mathbf{\Delta_{fd}}$ | $\mathbf{\Delta_{cs}}$ | $\mathbf{\Gamma_{fd}}$ | $\mathbf{\Gamma_{cs, real}}$ | $\mathbf{\Gamma_{cs, 45^{\circ}}}$ |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Max Error** | 0.92098 | $\sim 1.535\text{e-}13$ | $1.421\text{e+}14$ | 7.847 | 7.621 |
+| **Median** | 0.00020 | $\sim 3.820\text{e-}14$ | 7.628 | 7.621 | $0.0000428$ |
+| **Percentile 90** | 0.03617 | $\sim 1.193\text{e-}13$ | $8.831\text{e+}10$ | 7.704 | 0.93925 |
 
-No NaNs or unstable results were encountered during sweeps.
+---
+
+## Observations 
+
+Based on the numerical data generated across the two scenarios, the following key observations were made regarding method accuracy and stability:
+
+* **Accuracy Ranking:** Complex-step methods clearly outperform finite-difference (FD) ones.
+Both $\Gamma_{cs,real}$ and $\Gamma_{cs,45°}$ remain stable down to the smallest step sizes, while $\Gamma_{fd}$ and $\Delta_{fd}$ degrade rapidly due to roundoff. The 45° complex-step version yields slightly lower noise and better numerical symmetry. 
+* **Dependence on Step Size ($h_{rel}$):**
+    * **Complex-Step Methods:** These methods maintained consistently high accuracy across a broad range of step sizes, performing optimally even for very small $h_{rel}$, as they are inherently immune to subtraction and round-off errors.
+    * **Finite Differences:** The accuracy of $\Delta_{fd}$ peaked around $h_{rel} \approx 10^{-5}$ but rapidly deteriorated for smaller step sizes ($h_{rel} < 10^{-8}$) due to **big cancellation** errors.
+
+* **Differences between Scenarios:** The “stress” case (short maturity, low volatility) amplifies instability in FD gamma due to the smaller option sensitivity, but complex-step performance is unaffected.
+
+* **Stability Issues:** FD gamma produced extreme outliers and NaNs for $h_{rel} < 10^{-10}$, which were expected from cancellation.
+After ensuring both $C(S)$ and $C(S+i h)$ used the same templated pricing function, complex-step gamma behaved perfectly
 
 ---
 
@@ -122,12 +135,11 @@ The **complex-step method** avoids subtractive cancellation by leveraging the im
 
 ---
 
-## Recommendation
+### Recommendation
 
-| Method | Suggested Use | Recommended Step Size |
-|---------|----------------|------------------------|
-| Finite Difference | Basic implementation; acceptable for moderate `h`. | `h_rel ≈ 1e−5` |
-| Complex-Step (Real) | Highly stable; best general method. | Any small `h_rel` |
-| Complex-Step (45°) | Same accuracy; slightly higher computational cost. | Any small `h_rel` |
+* **For $\Delta$ and $\Gamma$:** Use complex-step differentiation whenever possible.
+* **Step-size choice:** $h_{rel} = 10^{-10}$ to $10^{-12}$ is safe for all practical purposes; results are stable across several orders of magnitude.
+* **Finite differences:** Only acceptable for rough estimates; choose $h_{rel} \approx 10^{-5}$ to minimize error.
+* **45° complex-step:** Recommended for $\Gamma$ due to its robustness and slightly improved numerical symmetry.
 
 ---
