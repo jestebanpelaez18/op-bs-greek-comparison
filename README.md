@@ -56,8 +56,6 @@ To perform a full clean:
 make fclean
 ```
 
-Both commands will generate the CSV's. Based on the requiriments the CSV's are already included in the submission, this is in case the execution is required. 
-
 ---
 
 ### Option B — Manual Compilation
@@ -78,8 +76,15 @@ Then run:
 
 ```bash
 ./bin/main      # Linux/MacOS
+```
+
+or:
+
+```bash
 bin\main.exe    # Windows
 ```
+
+Both commands will generate the CSV's. Based on the requiriments the CSV's are already included in the submission, this is in case the execution is required. 
 
 ---
 ## Validation Scenarios
