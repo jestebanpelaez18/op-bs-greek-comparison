@@ -35,8 +35,7 @@ run: main
 	./$(MAIN_BIN)
 
 clean:
-	@echo "Cleaning generated CSV and binaries..."
-	rm -f *.csv
+	@echo "Cleaning binaries..."
 	rm -f $(MAIN_BIN) $(TEST_BIN)
 
 fclean: clean
